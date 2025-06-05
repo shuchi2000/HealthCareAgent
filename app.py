@@ -1,7 +1,7 @@
 import streamlit as st
 
 # Sidebar: Chatbot info and filters
-st.sidebar.title("🏥 Health Metrics Chatbot")
+st.sidebar.title("🏥 Care Intel")
 st.sidebar.markdown("**For Non-Clinical Staff**")
 hospital = st.sidebar.selectbox(
     "Select Hospital",
@@ -42,15 +42,19 @@ st.sidebar.markdown("---")
 st.sidebar.info("Filters will be used for dataset queries.")
 
 # Main: Chat UI
-st.title("💬 MedMetricsBot")
+st.title("HealthCare Intelligence Agent For Non-Clinical Informations")
 st.markdown(f"**Hospital:** {hospital}  |  **Department:** {department}")
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
 def get_bot_response(user_input):
-    # Placeholder for actual agent connection
-    return f"Echo: {user_input} (filtered by {hospital}, {department})"
+    try:
+        from agent import get_agent_response
+        response = get_agent_response(f"{user_input} (filtered by {hospital}, {department})")
+        return response
+    except Exception as e:
+        return f"Error: {e}"
 
 with st.container():
     for chat in st.session_state.chat_history:
@@ -61,4 +65,4 @@ with st.container():
     if st.button("Send") and user_input:
         bot_response = get_bot_response(user_input)
         st.session_state.chat_history.append({"user": user_input, "bot": bot_response})
-        st.experimental_rerun()
+        st.rerun()
